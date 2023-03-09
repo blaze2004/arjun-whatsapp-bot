@@ -1,6 +1,6 @@
 import axios from './utils/client';
 import qrcode from 'qrcode-terminal';
-import { WAState, Events, Client, LocalAuth } from 'whatsapp-web.js';
+import { WAState, Events, Client, LocalAuth, MessageTypes } from 'whatsapp-web.js';
 import { ArjunResponse, WaBotMessage } from './types';
 
 export const client: Client=new Client({
@@ -35,7 +35,7 @@ client.on(Events.MESSAGE_RECEIVED, async (message: WaBotMessage) => {
         body: message.body
     };
 
-    if (message.type!="TEXT") {
+    if (message.type!=MessageTypes.TEXT) {
         await message.reply("Really sorry, but currently I can process only text messages.");
         return;
     }
