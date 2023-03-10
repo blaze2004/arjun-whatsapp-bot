@@ -61,6 +61,10 @@ client.on(Events.MESSAGE_RECEIVED, async (message: WaBotMessage) => {
         console.log("Error connecting to arjun. \nError: ", error);
         await message.reply("Look's like I am unable to connect to my server.\nReport the issue at shubhamtiwaripython2004@gmail.com or try again after some time.");
     }
+
+    const chat=await client.getChatById(message.from);
+    await chat.delete();
+
     return;
 
 });
