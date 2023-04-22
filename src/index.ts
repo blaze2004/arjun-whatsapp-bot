@@ -1,5 +1,6 @@
 import axios from './utils/client';
 import qrcode from 'qrcode-terminal';
+import fs from "fs";
 import express, { Request, Response } from "express";
 import { WAState, Events, Client, LocalAuth, MessageTypes } from 'whatsapp-web.js';
 import { ArjunResponse, WaBotMessage } from './types';
@@ -19,6 +20,7 @@ export const client: Client=new Client({
 client.on(Events.QR_RECEIVED, (qr: string) => {
     qrcode.generate(qr, { small: true });
     console.log('QR code recieved.', qr);
+    fs.writeFileSync("./qr/last.qr", qr);
 });
 
 client.on(Events.READY, () => {
@@ -72,6 +74,48 @@ client.on(Events.MESSAGE_RECEIVED, async (message: WaBotMessage) => {
 app.get("/", (req: Request, res: Response) => {
     console.log("Bot is up and running.");
     res.send("The bot is up and running.");
+});
+
+const sendQr=(res: Response) => {
+    fs.readFile("./qr/last.qr", (err, last_qr) => {
+        if (!err&&last_qr) {
+            var page=`
+                        <html>
+                            <body>
+                                <script type="module">
+                                </script>
+                                <div id="qrcode"></div>
+                                <script type="module">
+                                    import QrCreator from "https://cdn.jsdelivr.net/npm/qr-creator/dist/qr-creator.es6.min.js";
+                                    let container = document.getElementById("qrcode");
+                                    QrCreator.render({
+                                        text: "${last_qr}",
+                                        radius: 0.5, // 0.0 to 0.5
+                                        ecLevel: "H", // L, M, Q, H
+                                        fill: "#536DFE", // foreground color
+                                        background: null, // color or null for transparent
+                                        size: 256, // in pixels
+                                    }, container);
+                                </script>
+                            </body>
+                        </html>
+                    `;
+            res.write(page);
+            res.end();
+        }
+    });
+}
+
+app.get("/qr", (req: Request, res: Response) => {
+    client
+        .getState()
+        .then((data) => {
+            if (data) {
+                res.write("<html><body><h2>Already Authenticated</h2></body></html>");
+                res.end();
+            } else sendQr(res);
+        })
+        .catch(() => sendQr(res));
 });
 
 app.listen(3000, () => {
