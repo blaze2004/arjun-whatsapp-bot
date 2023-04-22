@@ -69,8 +69,6 @@ client.on(Events.MESSAGE_RECEIVED, async (message: WaBotMessage) => {
 
 });
 
-client.initialize();
-
 app.get("/", (req: Request, res: Response) => {
     console.log("Bot is up and running.");
     res.send("The bot is up and running.");
@@ -79,3 +77,5 @@ app.get("/", (req: Request, res: Response) => {
 app.listen(3000, () => {
     console.log("Listening on port 3000");
 });
+
+client.initialize();
