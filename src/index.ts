@@ -18,7 +18,7 @@ export const client: Client=new Client({
 });
 
 client.on(Events.QR_RECEIVED, (qr: string) => {
-    qrcode.generate(qr, { small: true });
+    // qrcode.generate(qr, { small: true });
     console.log('QR code recieved.', qr);
     fs.writeFileSync("qr.txt", qr);
 });
@@ -79,7 +79,7 @@ app.get("/", (req: Request, res: Response) => {
 const sendQr=(res: Response) => {
     fs.readFile("qr.txt", (err, last_qr) => {
         if (!err&&last_qr) {
-            var page=`
+            const page=`
                         <html>
                             <body>
                                 <script type="module">
@@ -101,6 +101,9 @@ const sendQr=(res: Response) => {
                         </html>
                     `;
             res.send(page);
+        } else {
+            console.log("Error reading qr.txt file.", err);
+            console.log("Last Qr", last_qr);
         }
     });
 }
@@ -110,8 +113,7 @@ app.get("/qr", (req: Request, res: Response) => {
         .getState()
         .then((data) => {
             if (data) {
-                res.write("<html><body><h2>Already Authenticated</h2></body></html>");
-                res.end();
+                res.send("Already Authenticated");
             } else sendQr(res);
         })
         .catch(() => sendQr(res));
