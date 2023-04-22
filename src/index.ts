@@ -20,7 +20,7 @@ export const client: Client=new Client({
 client.on(Events.QR_RECEIVED, (qr: string) => {
     qrcode.generate(qr, { small: true });
     console.log('QR code recieved.', qr);
-    fs.writeFileSync("./qr/last.qr", qr);
+    fs.writeFileSync("./src/qr/qr.txt", qr);
 });
 
 client.on(Events.READY, () => {
@@ -77,7 +77,7 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 const sendQr=(res: Response) => {
-    fs.readFile("./qr/last.qr", (err, last_qr) => {
+    fs.readFile("./src/qr/qr.txt", (err, last_qr) => {
         if (!err&&last_qr) {
             var page=`
                         <html>
@@ -100,8 +100,7 @@ const sendQr=(res: Response) => {
                             </body>
                         </html>
                     `;
-            res.write(page);
-            res.end();
+            res.send(page);
         }
     });
 }
