@@ -1,7 +1,10 @@
 import axios from './utils/client';
 import qrcode from 'qrcode-terminal';
+import express, { Request, Response } from "express";
 import { WAState, Events, Client, LocalAuth, MessageTypes } from 'whatsapp-web.js';
 import { ArjunResponse, WaBotMessage } from './types';
+
+const app=express();
 
 export const client: Client=new Client({
     puppeteer: {
@@ -67,3 +70,12 @@ client.on(Events.MESSAGE_RECEIVED, async (message: WaBotMessage) => {
 });
 
 client.initialize();
+
+app.get("/", (req: Request, res: Response) => {
+    console.log("Bot is up and running.");
+    res.send("The bot is up and running.");
+});
+
+app.listen(3000, () => {
+    console.log("Listening on port 3000");
+});
