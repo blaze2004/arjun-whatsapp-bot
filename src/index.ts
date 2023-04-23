@@ -14,7 +14,7 @@ export const client: Client=new Client({
         args: ['--no-sandbox', '--disable-setuid-sandbox'],
     },
     authStrategy: new LocalAuth({
-        dataPath: `${__dirname}/session`,
+        dataPath: `session`,
     }),
 });
 
