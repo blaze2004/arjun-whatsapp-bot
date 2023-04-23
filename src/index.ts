@@ -1,9 +1,10 @@
 import axios from './utils/client';
-import qrcode from 'qrcode-terminal';
+// import qrcode from 'qrcode-terminal';
 import fs from "fs";
-import express, { Request, Response } from "express";
+import express from "express";
 import { WAState, Events, Client, LocalAuth, MessageTypes } from 'whatsapp-web.js';
 import { ArjunResponse, WaBotMessage } from './types';
+import router from './routes';
 
 const app=express();
 
@@ -30,6 +31,10 @@ client.on(Events.READY, () => {
 client.on(Events.DISCONNECTED, (reason: WAState) => {
     client.destroy();
     console.log('Client was logged out', reason);
+});
+
+client.on(Events.AUTHENTICATION_FAILURE, (error: string) => {
+    console.log('Authentication failure', error);
 });
 
 client.on(Events.MESSAGE_RECEIVED, async (message: WaBotMessage) => {
@@ -61,7 +66,7 @@ client.on(Events.MESSAGE_RECEIVED, async (message: WaBotMessage) => {
 
     } catch (error) {
         console.log("Error connecting to arjun. \nError: ", error);
-        await message.reply("Look's like I am unable to connect to my server.\nReport the issue at shubhamtiwaripython2004@gmail.com or try again after some time.");
+        await message.reply("Look's like I am unable to connect to my server.\nReport the issue at shubham@visualbrahma.tech or try again after some time.");
     }
 
     const chat=await client.getChatById(message.from);
@@ -71,53 +76,7 @@ client.on(Events.MESSAGE_RECEIVED, async (message: WaBotMessage) => {
 
 });
 
-app.get("/", (req: Request, res: Response) => {
-    console.log("Bot is up and running.");
-    res.send("The bot is up and running.");
-});
-
-const sendQr=(res: Response) => {
-    fs.readFile("qr.txt", (err, last_qr) => {
-        if (!err&&last_qr) {
-            const page=`
-                        <html>
-                            <body>
-                                <script type="module">
-                                </script>
-                                <div id="qrcode"></div>
-                                <script type="module">
-                                    import QrCreator from "https://cdn.jsdelivr.net/npm/qr-creator/dist/qr-creator.es6.min.js";
-                                    let container = document.getElementById("qrcode");
-                                    QrCreator.render({
-                                        text: "${last_qr}",
-                                        radius: 0.5, // 0.0 to 0.5
-                                        ecLevel: "H", // L, M, Q, H
-                                        fill: "#536DFE", // foreground color
-                                        background: null, // color or null for transparent
-                                        size: 256, // in pixels
-                                    }, container);
-                                </script>
-                            </body>
-                        </html>
-                    `;
-            res.send(page);
-        } else {
-            console.log("Error reading qr.txt file.", err);
-            console.log("Last Qr", last_qr);
-        }
-    });
-}
-
-app.get("/qr", (req: Request, res: Response) => {
-    client
-        .getState()
-        .then((data) => {
-            if (data) {
-                res.send("Already Authenticated");
-            } else sendQr(res);
-        })
-        .catch(() => sendQr(res));
-});
+app.use("/", router);
 
 app.listen(3000, () => {
     console.log("Listening on port 3000");
