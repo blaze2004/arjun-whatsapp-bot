@@ -24,15 +24,15 @@ RUN apt-get update && apt install -y \
     libxss1 libxtst6 ca-certificates fonts-liberation\
     libappindicator1 libnss3 lsb-release xdg-utils wget
 
-WORKDIR /app
+WORKDIR /src
 
-COPY *.json ./
+COPY *.json .
 
 RUN npm i
 
 RUN npm run build
 
-RUN chown arjun:arjun /app
+RUN chown arjun:arjun /src
 
 # Copy the source code of the project into the container.
 COPY --chown=arjun:arjun . .
