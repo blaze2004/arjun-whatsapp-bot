@@ -26,7 +26,7 @@ RUN apt-get update && apt install -y \
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY *.json ./
 
 RUN npm i
 
