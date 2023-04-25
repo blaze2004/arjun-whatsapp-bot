@@ -32,14 +32,12 @@ RUN npm i
 
 RUN cd /app
 
-RUN ls
-
-RUN npm run build
-
 RUN chown arjun:arjun /app
 
 # Copy the source code of the project into the container.
 COPY --chown=arjun:arjun . .
+
+RUN npm run build
 
 # Use user "arjun" to run the build commands below and the server itself.
 USER arjun

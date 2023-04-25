@@ -165,3 +165,4 @@ dist
 src/session
 /session/
 qr.txt
+.vscode/
