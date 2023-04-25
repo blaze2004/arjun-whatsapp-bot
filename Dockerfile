@@ -26,16 +26,14 @@ RUN apt-get update && apt install -y \
 
 WORKDIR /app
 
-COPY *.json .
-
-RUN npm i
-
 RUN cd /app
 
 RUN chown arjun:arjun /app
 
 # Copy the source code of the project into the container.
 COPY --chown=arjun:arjun . .
+
+RUN npm upgrade
 
 RUN npm run build
 
