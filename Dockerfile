@@ -32,6 +32,8 @@ RUN npm i
 
 RUN cd /app
 
+RUN ls
+
 RUN npm run build
 
 RUN chown arjun:arjun /app
