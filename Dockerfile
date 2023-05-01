@@ -2,7 +2,7 @@
 FROM node:18
 
 # Add user that will be used in the container.
-RUN useradd arjun
+# RUN useradd arjun
 
 # Port used by this container to serve HTTP.
 EXPOSE 3000
@@ -11,10 +11,11 @@ WORKDIR /app
 
 RUN cd /app
 
-RUN chown arjun:arjun /app
+# RUN chown arjun:arjun /app
 
 # Copy the source code of the project into the container.
-COPY --chown=arjun:arjun . .
+# COPY --chown=arjun:arjun . .
+COPY . .
 
 RUN npm i
 
@@ -38,6 +39,6 @@ RUN apt update && apt install -y \
     libfreetype6 libatspi2.0-0
 
 # Use user "arjun" to run the build commands below and the server itself.
-USER arjun
+# USER arjun
 
 CMD npm start
