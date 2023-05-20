@@ -21,7 +21,7 @@ export const client: Client=new Client({
 client.on(Events.QR_RECEIVED, (qr: string) => {
     // qrcode.generate(qr, { small: true });
     console.log('QR code recieved.', qr);
-    fs.writeFileSync("qr.txt", qr);np
+    fs.writeFileSync("qr.txt", qr);
 });
 
 client.on(Events.READY, () => {
